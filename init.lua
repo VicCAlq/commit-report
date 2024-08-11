@@ -6,7 +6,7 @@ local commits = {}
 
 if branches ~= nil then
   for line in branches:lines() do
-    if string.find(line, "remotes/origin") then
+    if line:find("remotes/origin") then
       print("skipped")
     else
       local commit_info = {}
@@ -20,9 +20,9 @@ if branches ~= nil then
 
       if commit ~= nil then
         for cline in commit:lines() do
-          if string.find(cline, "Author") then
+          if cline:find("Author") then
             commit_info.author = cline
-          elseif string.find(cline, "Date") then
+          elseif cline.find("Date") then
             commit_info.date = cline
           end
         end
