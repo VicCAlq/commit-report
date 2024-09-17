@@ -48,7 +48,8 @@ local function remove_inactive_branches(branches, inactive_days)
 end
 
 if all_branches ~= nil then
-	local my_branches = remove_remote_branches(all_branches)
+	local parsed_branches = remove_remote_branches(branches_to_table(all_branches))
+
 	for line in all_branches:lines() do
 		if string.find(line, "remotes/origin") then
 			print("skipped")
