@@ -54,16 +54,8 @@ end
 function M.serialize_commits(path, branch)
   path = path or "~/CodeProjects/Studies/Lua/daily-summarizer/"
   branch = branch or "main"
-  -- branch = branch or "feat/filters"
   local processed_commits = {}
-  --[[
-    Commit format
-    commit 8839f79777e30b237e61c0cec7fbec1fe601592d (HEAD -> feat/filters, docs/specs)
-    Author: Victor Cavalcanti <victor.mca.dev@gmail.com>
-    Date:   Tue Sep 17 18:57:05 2024 -0300
-  
-    p.docs: Basic project specifications written
-  ]]
+
   local commit = io.popen(string.format("cd %s && git checkout %s && git log", path, branch))
 
   if commit ~= nil then
@@ -104,7 +96,5 @@ function M.serialize_commits(path, branch)
 
   return processed_commits
 end
-
-M.serialize_commits()
 
 return M
