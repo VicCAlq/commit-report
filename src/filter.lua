@@ -54,12 +54,13 @@ function M.get_commits_in_range(branches, range)
 
   for i, v in ipairs(branches) do
     local commits = parser.serialize_commits(constants.test_path, branches[i])
+    commits_in_range[v] = {}
 
     if commits ~= nil then
       for _, c in ipairs(commits) do
         local today = Date({ hour = 00, min = 00, sec = 00 })
         if today.time - c.time < constants.day_length * range.oldest then
-          commits_in_range[v] = c
+          table.insert(commits_in_range[v], c)
         end
       end
     end
