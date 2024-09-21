@@ -59,7 +59,7 @@ function M.get_commits_in_range(branches, range)
       for _, c in ipairs(commits) do
         local today = Date({ hour = 00, min = 00, sec = 00 })
         if today.time - c.time < constants.day_length * range.oldest then
-          table.insert(commits_in_range[v], c)
+          commits_in_range[v] = c
         end
       end
     end
