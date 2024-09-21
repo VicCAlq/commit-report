@@ -49,7 +49,7 @@ end
 ---@return table<string> - Table containing the commits
 function M.get_commits_in_range(branches, range)
   branches = branches or { "main", "feat/filters" }
-  range = range or { oldest = 4, latest = 0 }
+  range = range or { oldest = 44, latest = 0 }
   local commits_in_range = {}
 
   for i, v in ipairs(branches) do
