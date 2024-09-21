@@ -32,29 +32,54 @@ local M = {}
   }
 ]]
 
+--- Gets commits from the given branch
+---@param branches table<string> - List of branch names
+---@param range { oldest: number, latest: number }? - Range of days to gather commits from, from oldest to newest. Defaults to { oldest: 2, latest: 0 }
+---@return table<table<string>> - Table containing the commits for each branch
+function M.get_commits_from_branches(branches, range)
+  local filtered_commits = {}
+
+  for _, v in ipairs(branches) do
+  end
+end
+
 --- Filters the branch table removing inactive branches
----@param branch string - Branch name
----@param range_days { oldest: number, latest: number }? - Range of days to gather commits from, from oldest to newest. Defaults to { oldest: 2, latest: 0 }
----@return table<string> - Table containing the branches
-function M.get_commits_in_range(branch, range_days)
-  local range = range_days or { oldest = 4, latest = 0 }
+---@param branches table<string> - List of branch names
+---@param range { oldest: number, latest: number }? - Range of days to gather commits from, from oldest to newest. Defaults to { oldest: 2, latest: 0 }
+---@return table<string> - Table containing the commits
+function M.get_commits_in_range(branches, range)
+  branches = branches or { "main", "feat/filters" }
+  range = range or { oldest = 4, latest = 0 }
   local commits_in_range = {}
 
-  local commits = parser.serialize_commits(constants.test_path)
+  for i, v in ipairs(branches) do
+    local commits = parser.serialize_commits(constants.test_path, branches[i])
 
-  if commits ~= nil then
-    for _, c in ipairs(commits) do
-      local today = Date({ hour = 00, min = 00, sec = 00 })
-      if today.time - c.time < constants.day_length * range.oldest then
-        table.insert(commits_in_range, c)
+    if commits ~= nil then
+      for _, c in ipairs(commits) do
+        local today = Date({ hour = 00, min = 00, sec = 00 })
+        if today.time - c.time < constants.day_length * range.oldest then
+          table.insert(commits_in_range[v], c)
+        end
       end
     end
   end
 
+  -- local commits = parser.serialize_commits(constants.test_path, branches[1])
+  --
+  -- if commits ~= nil then
+  --   for _, c in ipairs(commits) do
+  --     local today = Date({ hour = 00, min = 00, sec = 00 })
+  --     if today.time - c.time < constants.day_length * range.oldest then
+  --       table.insert(commits_in_range, c)
+  --     end
+  --   end
+  -- end
+  --
   pretty.dump(commits_in_range)
   return commits_in_range
 end
 
-M.get_commits_in_range("feat/filters", nil)
+M.get_commits_in_range(nil, nil)
 
 return M

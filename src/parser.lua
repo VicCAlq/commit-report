@@ -51,8 +51,9 @@ end
 ---@param path string? - Path of the git repo
 ---@param branch string? - Name of the branch whose commits will be serialized
 ---@return table<Commit>
-function M.serialize_commits(path)
+function M.serialize_commits(path, branch)
   path = path or "~/CodeProjects/Studies/Lua/daily-summarizer/"
+  branch = branch or "main"
   -- branch = branch or "feat/filters"
   local processed_commits = {}
   --[[
@@ -63,7 +64,7 @@ function M.serialize_commits(path)
   
     p.docs: Basic project specifications written
   ]]
-  local commit = io.popen(string.format("cd %s && " .. "git log", path))
+  local commit = io.popen(string.format("cd %s && git checkout %s && git log", path, branch))
 
   if commit ~= nil then
     local single_commit = {}
