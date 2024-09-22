@@ -25,7 +25,7 @@ end
 ---@return table<string> remote_branches - Table containing the remote branches
 ---@return table<string> local_branches - Table containing the local branches
 function M.categorize_branches(branches)
-  assert(type(branches) == "table", "The value given for 'branches' is not a table")
+  assert(type(branches) == "table", "categorize_branches: The value given for 'branches' is not a table")
 
   local remote_branches = {}
   local local_branches = {}
@@ -54,8 +54,8 @@ end
 ---@param branch string? - Name of the branch whose commits will be serialized
 ---@return table<Commit>
 function M.serialize_commits(path, branch)
-  assert(type(path) == "string", "The value given for 'path' is not a string")
-  assert(type(branch) == "string", "The value given for 'branch' is not a string")
+  assert(type(path) == "string", "serialize_commits: The value given for 'path' is not a string")
+  assert(type(branch) == "string", "serialize_commits: The value given for 'branch' is not a string")
 
   path = path or "~/CodeProjects/Studies/Lua/daily-summarizer/"
   branch = branch or "main"
