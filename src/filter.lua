@@ -42,7 +42,7 @@ function M.get_commits_in_range(branches, range)
     end
   end
 
-  -- pretty.dump(commits_in_range)
+  pretty.dump(commits_in_range)
   return commits_in_range
 end
 
