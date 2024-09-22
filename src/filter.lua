@@ -11,11 +11,13 @@ local M = {}
 ---@return table<string> - Table containing the commits
 function M.get_commits_in_range(branches, range)
   -- Assertions for the params
-  assert(type(branches) == "table", "The value given for 'branches' is not a table")
-  assert(type(range) == "table", "The value given for 'range' is not a table")
-  assert(type(range.oldest) == "number", "The value given for 'range.oldest' is not a number")
-  assert(type(range.latest) == "number", "The value given for 'range.latest' is not a number")
-  assert(range.oldest > range.latest, "The value for 'range.oldest' has to be larger than 'range.latest'")
+  assert(type(branches) == "table" or "nil", "The value given for 'branches' is not a table or nil")
+  assert(type(range) == "table" or "nil", "The value given for 'range' is not a table or nil")
+  if range ~= nil then
+    assert(type(range.oldest) == "number", "The value given for 'range.oldest' is not a number")
+    assert(type(range.latest) == "number", "The value given for 'range.latest' is not a number")
+    assert(range.oldest > range.latest, "The value for 'range.oldest' has to be larger than 'range.latest'")
+  end
 
   branches = branches or { "main", "feat/filters" }
   range = range or { oldest = 4, latest = 0 }
