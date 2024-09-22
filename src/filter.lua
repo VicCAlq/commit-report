@@ -10,6 +10,13 @@ local M = {}
 ---@param range { oldest: number, latest: number }? - Range of days to gather commits from, from oldest to newest. Defaults to { oldest: 4, latest: 0 }
 ---@return table<string> - Table containing the commits
 function M.get_commits_in_range(branches, range)
+  -- Assertions for the params
+  assert(type(branches) == "table", "The value given for 'branches' is not a table")
+  assert(type(range) == "table", "The value given for 'range' is not a table")
+  assert(type(range.oldest) == "number", "The value given for 'range.oldest' is not a number")
+  assert(type(range.latest) == "number", "The value given for 'range.latest' is not a number")
+  assert(range.oldest > range.latest, "The value for 'range.oldest' has to be larger than 'range.latest'")
+
   branches = branches or { "main", "feat/filters" }
   range = range or { oldest = 4, latest = 0 }
   local commits_in_range = {}
