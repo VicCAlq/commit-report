@@ -1,5 +1,26 @@
 commands = {}
 dependencies = {
+   lsqlite3complete = {
+      ["0.9.6-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               },
+               {
+                  op = "<",
+                  version = {
+                     5, 5, string = "5.5"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
    luafilesystem = {
       ["1.8.0-1"] = {
          {
@@ -27,6 +48,9 @@ dependencies = {
 modules = {
    lfs = {
       "luafilesystem/1.8.0-1"
+   },
+   lsqlite3complete = {
+      "lsqlite3complete/0.9.6-1"
    },
    ["pl.Date"] = {
       "penlight/1.14.0-2"
@@ -147,6 +171,18 @@ modules = {
    }
 }
 repository = {
+   lsqlite3complete = {
+      ["0.9.6-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               lsqlite3complete = "lsqlite3complete.so"
+            }
+         }
+      }
+   },
    luafilesystem = {
       ["1.8.0-1"] = {
          {
