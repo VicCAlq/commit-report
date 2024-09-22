@@ -48,7 +48,7 @@ They must be then followed by a dot `.` to chain into the `type` of work done in
 - `rem` - Removal
 - `dep` - Dependencies (new and updates)
 - `plug` - Plugins (new and updates)
-- `test` - Test creation and atualization
+- `test` - Test creation, refactor or update
 - `env` - Environment details
 - `conf` - Project settings
 
