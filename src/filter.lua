@@ -11,17 +11,14 @@ local M = {}
 ---@return table<string> - Table containing the commits
 function M.get_commits_in_range(branches, range)
   -- Assertions for the params
-  assert(
-    type(branches) == "table" or "nil",
-    "get_commits_in_range: The value given for 'branches' is not a table or nil"
-  )
-  assert(type(range) == "table" or "nil", "get_commits_in_range: The value given for 'range' is not a table or nil")
+  assert(type(branches) == "table" or "nil", "get_commits_in_range: Value for 'branches' is not a table or nil")
+  assert(type(range) == "table" or "nil", "get_commits_in_range: Value for 'range' is not a table or nil")
   if range ~= nil then
-    assert(type(range.oldest) == "number", "get_commits_in_range: The value given for 'range.oldest' is not a number")
-    assert(type(range.latest) == "number", "get_commits_in_range: The value given for 'range.latest' is not a number")
+    assert(type(range.oldest) == "number", "get_commits_in_range: Value for 'range.oldest' is not a number")
+    assert(type(range.latest) == "number", "get_commits_in_range: Value for 'range.latest' is not a number")
     assert(
       range.oldest > range.latest,
-      "get_commits_in_range: The value for 'range.oldest' has to be larger than 'range.latest'"
+      "get_commits_in_range: Value for 'range.oldest' has to be larger than 'range.latest'"
     )
   end
 

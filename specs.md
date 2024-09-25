@@ -6,6 +6,7 @@ This app's main function is to create a summary of the latest activities in a re
 
 - 1st iteration can be via CLI, and getting the repo either through user input, or a config file (TOML, YAML, JSON or similar)
 - 2nd iteration would be a web service with a preview function.
+- Gather the repos by using `git clone --bare --filter=blob:none repo_address_goes_here`
 - Implement a SQLite db to store the commits
 - It'll only check things uploaded to the main repo, so local branches are not considered
 - The summary is done through the commit messages, which will need to follow a template to be parsed
@@ -37,20 +38,21 @@ The first letter (`p` in the example) tells us the `status` of the task. They tr
 
 They must be then followed by a dot `.` to chain into the `type` of work done in the commit (`impl` in the example):
 
-- `impl` - Implementation (for new features)
-- `chore` - Chore (clean-ups, making code adhere to style-guide, etc)
+- `asset` - For asset aditions
 - `bug` - For bugfixes
-- `hot` - For small changes
-- `upd` - Updates implementation to newer version
-- `perf` - Works on improving performance
+- `chore` - Chore (clean-ups, making code adhere to style-guide, etc)
+- `conf` - Project settings
+- `dep` - Dependencies (new and updates)
 - `doc` - Documentation (readmes and docstrings)
+- `env` - Environment details
+- `errh` - Error handlers
+- `hot` - For small changes
+- `impl` - Implementation (for new features)
+- `perf` - Works on improving performance
+- `plug` - Plugins (new and updates)
 - `refac` - Refactors in general (modularization, design pattern implementation, etc)
 - `rem` - Removal
-- `dep` - Dependencies (new and updates)
-- `plug` - Plugins (new and updates)
-- `errh` - Error handlers
 - `test` - Test creation, refactor or update
-- `env` - Environment details
-- `conf` - Project settings
+- `upd` - Updates implementation to newer version
 
 Other types of work done can be implemented in the future. Those are then followed by a double-colon, after which comes the commit message, either as a one-liner or as the commit title and the message. As long as the first things are the `status` and `type` of the work done it'll be parsed correctly.
