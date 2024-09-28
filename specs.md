@@ -6,12 +6,29 @@ This app's main function is to create a summary of the latest activities in a re
 
 - 1st iteration can be via CLI, and getting the repo either through user input, or a config file (TOML, YAML, JSON or similar)
 - 2nd iteration would be a web service with a preview function.
+- Gather the repos by using `git clone --bare --filter=blob:none repo_address_goes_here`
 - Implement a SQLite db to store the commits
 - It'll only check things uploaded to the main repo, so local branches are not considered
 - The summary is done through the commit messages, which will need to follow a template to be parsed
 - Collaborators' pictures can be specified for the report
+- Write summaries using Ollama if possible. Counts points for AI usage
 - Decide on which and how to implement the charts
 - Report format can also be specified (vertical for print, horizontal for presentation)
+
+## App workflow
+
+- Call the app by something like `summarizer https://www.gitsmth.com/my_company/my_repo.git`
+- Show cloning progress
+- After that, prompt the user about:
+  - Custom config TOML file
+  - Days range from today
+  - Report format
+- Show progress of report generation
+- Give user the report file
+
+- Alternatively, it can all be said within the app call:
+  - `summarizer --vertical --days=1,4 https://www.gitsmth.com/my_company/my_repo.git`
+  - `summarizer https://www.gitsmth.com/my_company/my_repo.git path_to/my_config.toml`
 
 ## Monetization
 
@@ -37,20 +54,21 @@ The first letter (`p` in the example) tells us the `status` of the task. They tr
 
 They must be then followed by a dot `.` to chain into the `type` of work done in the commit (`impl` in the example):
 
-- `impl` - Implementation (for new features)
-- `chore` - Chore (clean-ups, making code adhere to style-guide, etc)
+- `asset` - For asset aditions
 - `bug` - For bugfixes
-- `hot` - For small changes
-- `upd` - Updates implementation to newer version
-- `perf` - Works on improving performance
+- `chore` - Chore (clean-ups, making code adhere to style-guide, etc)
+- `config` - Project settings
+- `dependency` - Dependencies (new and updates)
 - `doc` - Documentation (readmes and docstrings)
-- `refac` - Refactors in general (modularization, design pattern implementation, etc)
-- `rem` - Removal
-- `dep` - Dependencies (new and updates)
-- `plug` - Plugins (new and updates)
-- `errh` - Error handlers
-- `test` - Test creation, refactor or update
 - `env` - Environment details
-- `conf` - Project settings
+- `errors` - Error handlers
+- `hotfix` - For small changes
+- `implementation` - Implementation (for new features)
+- `performance` - Works on improving performance
+- `pluging` - Plugins (new and updates)
+- `refactor` - Refactors in general (modularization, design pattern implementation, etc)
+- `removal` - Removal
+- `test` - Test creation, refactor or update
+- `update` - Updates implementation to newer version
 
 Other types of work done can be implemented in the future. Those are then followed by a double-colon, after which comes the commit message, either as a one-liner or as the commit title and the message. As long as the first things are the `status` and `type` of the work done it'll be parsed correctly.
