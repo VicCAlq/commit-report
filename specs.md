@@ -30,6 +30,11 @@ This app's main function is to create a summary of the latest activities in a re
   - `summarizer --vertical --days=1,4 https://www.gitsmth.com/my_company/my_repo.git`
   - `summarizer https://www.gitsmth.com/my_company/my_repo.git path_to/my_config.toml`
 
+To test the calls easily, use either:
+
+- `lua init.lua $(cat ./test)`
+- `xargs lua init.lua < ./test`
+
 ## Monetization
 
 - For the web service, free-tier stores only the history for the current week (to save space)

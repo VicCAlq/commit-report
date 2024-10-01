@@ -22,7 +22,7 @@ function M.get_commits_in_range(branches, range)
     )
   end
 
-  branches = branches or { "main", "feat/filters", "feat/config-files" }
+  branches = branches or { "main" }
   range = range or { oldest = 4, latest = 0 }
   local commits_in_range = {}
 
@@ -48,7 +48,5 @@ function M.get_commits_in_range(branches, range)
   pretty.dump(commits_in_range)
   return commits_in_range
 end
-
-M.get_commits_in_range(nil, nil)
 
 return M
