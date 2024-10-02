@@ -36,13 +36,19 @@ function M.get_commits_in_range(branches, project, range)
   -- Getting today's date at 00:00:00 so the time of day the script
   -- runs doesn't affect the results
   local today = Date({ hour = 00, min = 00, sec = 00 })
-  io.write("Branch parsing progress: [")
 
   for i, v in ipairs(branches) do
     local commits = parser.serialize_commits(project, branches[i])
+
+    -- Progress bar implementation
     local done = i / #branches
     if done < 1 and (done * 100) % 10 <= 1 then
-      io.write(":")
+      local step = 20
+      io.write(
+        "\27[2K\27[0GBranch parsing progress > "
+          .. string.rep("█", math.ceil(done * step))
+          .. string.rep("▒", math.floor(step - (done * step)) - 1)
+      )
     end
 
     if commits ~= nil then
@@ -60,7 +66,7 @@ function M.get_commits_in_range(branches, project, range)
     end
   end
 
-  io.write("]\n")
+  io.write("\n")
 
   return commits_in_range
 end

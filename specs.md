@@ -17,18 +17,13 @@ This app's main function is to create a summary of the latest activities in a re
 
 ## App workflow
 
-- Call the app by something like `summarizer https://www.gitsmth.com/my_company/my_repo.git`
-- Show cloning progress
-- After that, prompt the user about:
-  - Custom config TOML file
-  - Days range from today
-  - Report format
-- Show progress of report generation
-- Give user the report file
+-[ ] Call the app by something like `summarizer https://www.gitsmth.com/my_company/my_repo.git` -[ ] Show cloning progress -[ ] After that, prompt the user about:
 
-- Alternatively, it can all be said within the app call:
-  - `summarizer --vertical --days=1,4 https://www.gitsmth.com/my_company/my_repo.git`
-  - `summarizer https://www.gitsmth.com/my_company/my_repo.git path_to/my_config.toml`
+- Custom config TOML file
+- Days range from today
+- Report format -[ ] Show progress of report generation -[ ] Give user the report file
+
+- Alternatively, it can all be said within the app call: -[x] `summarizer --vertical --days=1,4 https://www.gitsmth.com/my_company/my_repo.git`
 
 To test the calls easily, use either:
 
