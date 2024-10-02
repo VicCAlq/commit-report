@@ -1,4 +1,5 @@
 local Date = require("pl.Date")
+local path = require("pl.path")
 local stringx = require("pl.stringx")
 local pretty = require("pl.pretty")
 local Months = require("utils.constants").months
@@ -6,14 +7,16 @@ local Months = require("utils.constants").months
 local M = {}
 
 --- Generates a table containing the branches
----@param file file*? - File with branch names
+---@param project string - Project name as in its url
 ---@return table<string> - Table containing the branches
-function M.branches_to_table(file)
+function M.branches_to_table(project)
+  local raw_branches =
+    io.popen(string.format("cd %s && git branch -a", path.relpath("repos" .. path.sep .. project)), "r")
   local branches = {}
 
-  if file ~= nil then
-    for line in file:lines() do
-      table.insert(branches, line)
+  if raw_branches ~= nil then
+    for line in raw_branches:lines() do
+      table.insert(branches, stringx.lstrip(line, " *"))
     end
   end
 
@@ -32,7 +35,9 @@ function M.categorize_branches(branches)
 
   for _, v in ipairs(branches) do
     if string.find(v, "remotes/") then
-      table.insert(remote_branches, v)
+      if not string.find(v, "HEAD") then
+        table.insert(remote_branches, v)
+      end
     else
       table.insert(local_branches, v)
     end
@@ -50,23 +55,38 @@ end
 ---@field time number
 
 --- Insert commits in a table where each commit will be serialized with its own fields
----@param path string? - Path of the git repo
+---@param project string - Project name as in its url
 ---@param branch string? - Name of the branch whose commits will be serialized
 ---@return table<Commit>
-function M.serialize_commits(path, branch)
-  assert(type(path) == "string", "serialize_commits: The value given for 'path' is not a string")
+function M.serialize_commits(project, branch)
+  assert(type(project) == "string", "serialize_commits: The value given for 'project' is not a string")
   assert(type(branch) == "string", "serialize_commits: The value given for 'branch' is not a string")
 
-  path = path or "~/CodeProjects/Studies/Lua/daily-summarizer/"
-  branch = branch or "main"
+  if branch == nil then
+    branch = "main"
+  elseif stringx.startswith(branch, "remotes/origin/") then
+    branch = string.sub(branch, 16, #branch)
+  end
+
+  local project_path = path.relpath("repos" .. path.sep .. project)
   local processed_commits = {}
 
-  local commit = io.popen(string.format("cd %s && git checkout %s && git log", path, branch))
+  local commit = io.popen(string.format("cd %s && git switch -fq --progress %s && git log", project_path, branch))
 
   if commit ~= nil then
     local single_commit = {}
     for line in commit:lines() do
       if stringx.startswith(line, "commit") then
+        if
+          single_commit.description ~= nil
+          and single_commit.date ~= nil
+          and single_commit.author_name ~= nil
+          and single_commit.author_email ~= nil
+        then
+          table.insert(processed_commits, single_commit)
+          single_commit = {}
+        end
+
         local commit_hash = stringx.split(line, " ")[2]
         single_commit.commit = commit_hash
       elseif stringx.startswith(line, "Author") then
@@ -92,9 +112,11 @@ function M.serialize_commits(path, branch)
         }).time
         single_commit.time = time
       elseif #line > 1 then
-        single_commit.description = string.sub(line, 5, -1)
-        table.insert(processed_commits, single_commit)
-        single_commit = {}
+        if single_commit.description == nil then
+          single_commit.description = stringx.lstrip(line)
+        else
+          single_commit.description = single_commit.description .. "\n" .. line
+        end
       end
     end
   end
