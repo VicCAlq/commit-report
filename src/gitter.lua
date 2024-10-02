@@ -20,6 +20,12 @@ function M.clone(url)
     if err then
       error("Could not clone the repository from the url " .. url)
     end
+  else
+    local err, _ =
+      os.execute("cd ./repos/" .. repo_name .. " && echo -n 'Repository status: ' && git fetch --all && git pull")
+    if err ~= 0 then
+      error("Could not fetch updates for the repository " .. repo_name)
+    end
   end
 
   return repo_name

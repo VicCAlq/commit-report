@@ -86,23 +86,37 @@ function M.serialize_commits(project, branch)
           table.insert(processed_commits, single_commit)
           single_commit = {}
         end
-
-        local commit_hash = stringx.split(line, " ")[2]
-        single_commit.commit = commit_hash
+        single_commit.commit = stringx.split(line, " ")[2]
       elseif stringx.startswith(line, "Author") then
         local author = stringx.split(line, ":")[2]
         local author_fields = stringx.split(author, "<")
-        local author_name = string.sub(author_fields[1], 2, -2)
-        local author_email = string.sub(author_fields[2], 1, -2)
-        single_commit.author_name = author_name
-        single_commit.author_email = author_email
+        single_commit.author_name = string.sub(author_fields[1], 2, -2)
+        single_commit.author_email = string.sub(author_fields[2], 1, -2)
       elseif stringx.startswith(line, "Date") then
-        local date = string.sub(line, 9, -1)
-        single_commit.date = date
-        local date_parts = stringx.split(date, " ")
-        local month, day, year = Months[date_parts[2]], date_parts[3], date_parts[5]
+        local date_parts = stringx.split(string.sub(line, 9, -1), " ")
+        local year, month, day = date_parts[5], Months[date_parts[2]], date_parts[3]
         local clock_time = stringx.split(date_parts[4], ":")
-        local time = Date({
+
+        local formatted_date = {}
+
+        for _, v in ipairs({ year, month, day }) do
+          if tonumber(v) < 10 then
+            v = "0" .. v
+          end
+          table.insert(formatted_date, v)
+        end
+
+        single_commit.date = string.format(
+          "%s-%s-%s %s:%s:%s.000",
+          formatted_date[1],
+          formatted_date[2],
+          formatted_date[3],
+          clock_time[1],
+          clock_time[2],
+          clock_time[3]
+        )
+
+        single_commit.time = Date({
           year = year,
           month = month,
           day = day,
@@ -110,7 +124,6 @@ function M.serialize_commits(project, branch)
           min = clock_time[2],
           sec = clock_time[3],
         }).time
-        single_commit.time = time
       elseif #line > 1 then
         if single_commit.description == nil then
           single_commit.description = stringx.lstrip(line)
@@ -118,6 +131,7 @@ function M.serialize_commits(project, branch)
           single_commit.description = single_commit.description .. "\n" .. line
         end
       end
+      single_commit.branch = branch
     end
   end
 
