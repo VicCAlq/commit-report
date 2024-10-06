@@ -1,6 +1,6 @@
 local pretty = require("pl.pretty")
-local stringx = require("pl.stringx")
 local driver = require("luasql.sqlite3")
+local f = string.format
 
 ---@Module db.lua
 --- Module to create and manage SQLite3's databases for the project repositories.
@@ -82,29 +82,40 @@ function M.format_clauses(clauses)
   return clause_str
 end
 
---- Opens a database connection
+--- Opens a database connection and returns objects related to it
 ---@param repo_name string - Name of the repository's directory
+---@param table string - Name of the table to look for
 ---@return Environment env Environment object
 ---@return Connection con Connection object
 ---@return Cursor cur Cursor object
 ---@return table<string> col_names Column names
 ---@return table<string> col_types Column types
-function M.open(repo_name)
+function M.open(repo_name, table)
+  table = table or "main"
   local env = assert(driver.sqlite3())
-  local con = assert(env:connect("./" .. repo_name .. ".db"))
-  local cur = assert(con:execute([[ SELECT * from test_repo; ]]))
-  local col_names = cur:getcolnames()
-  local col_types = cur:getcoltypes()
-
-  local row = cur:fetch({}, "a")
-  -- pretty.dump(row)
-
-  while row do
-    -- print(string.format("%s | %s | %s", row.commit_hash, row.author_email, row.date))
-    row = cur:fetch(row, "a")
-  end
+  local con = assert(env:connect(f("./%s.db", repo_name)))
+  local cur = assert(con:execute(f("SELECT * from %s;", table)))
+  local col_names = assert(cur:getcolnames())
+  local col_types = assert(cur:getcoltypes())
 
   return env, con, cur, col_names, col_types
+end
+
+---@param con Connection Connection object
+---@param table string Table name to be created
+---@param fields table<string> List of fields for the new table
+function M.create_table(con, table, fields)
+  local field_defs = ""
+
+  for _, v in ipairs(fields) do
+    field_defs = f("%s%s, ", field_defs, v)
+  end
+  field_defs = string.sub(field_defs, 1, -3)
+
+  ---@diagnostic disable-next-line
+  local cur = assert(con:execute(f("CREATE TABLE IF NOT EXISTS %s ( %s );", table, field_defs)))
+
+  return cur
 end
 
 --- Runs a statement on the given connection
@@ -119,8 +130,17 @@ function M.select(con, table, columns, clauses)
 
   ---@diagnostic disable-next-line
   local cur = assert(con:execute("SELECT " .. cols .. " FROM " .. table .. clause_list))
+  return cur
+end
+
+--- Converts the given cursor to a list of row objects
+---@param cur Cursor
+---@return table rows
+function M.parse_cursor(cur)
+  ---@diagnostic disable-next-line
   local rows = cur:fetch({}, "a")
   while rows do
+    ---@diagnostic disable-next-line
     rows = cur:fetch(rows, "a")
   end
   return rows
@@ -144,7 +164,7 @@ function M.close(env, con, cur)
   return { is_cur_closed, is_con_closed, is_env_closed }
 end
 
-local env, con, cur, col_names, col_types = M.open("aaa")
+local env, con, cur, col_names, col_types = M.open("aaa", "test_repo")
 pretty.dump(col_names)
 pretty.dump(col_types)
 pretty.dump(M.close(env, con, cur))
