@@ -30,6 +30,11 @@ To test the calls easily, use either:
 - `lua init.lua $(cat ./test)`
 - `xargs lua init.lua < ./test`
 
+## Issues
+
+- Package `lsqlite3complete` has to be installed system-wide, so the better thing to do is use a docker container
+- It also has to be installed via `luarocks`
+
 ## Monetization
 
 - For the web service, free-tier stores only the history for the current week (to save space)
