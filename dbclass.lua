@@ -111,10 +111,22 @@ end
 
 function DB:open_table(table)
   local cur = assert(self.connection:execute(f("SELECT * FROM %s;", table)))
-  self.cursor = cur
-  self.col_names = cur:getcolnames()
-  self.col_types = cur:getcoltypes()
-  return self.cursor, self.col_names, self.col_types
+  -- self.cursor = cur
+  local col_names = cur:getcolnames()
+  local col_types = cur:getcoltypes()
+  self.col_names = {}
+  self.col_types = {}
+
+  for i = 1, #col_names do
+    table.insert(self.col_names, col_names[i])
+  end
+  for k, v in pairs(col_types) do
+    print(k, v)
+    -- table.insert(self.col_types, v)
+  end
+
+  local res = { self.col_names, self.col_types }
+  return res
 end
 
 function DB:select(tbl, columns, clauses)
@@ -140,6 +152,9 @@ function DB:select(tbl, columns, clauses)
 end
 
 local db = DB:new("aaa", "aaa", "aaa")
+-- pretty.dump(db.tables)
+pretty.dump(utils.unpack(db:open_table("test_repo"))[1])
 pretty.dump(db:select("test_repo"))
+pretty.dump(db:select("bbb"))
 
 return DB
