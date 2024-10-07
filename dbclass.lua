@@ -154,6 +154,7 @@ local db = DB:new("aaa", "aaa", "aaa")
 -- pretty.dump(db.tables)
 local a, b = utils.unpack(db:open_table("test_repo"))
 pretty.dump(a)
+pretty.dump(b)
 pretty.dump(db:select("test_repo"))
 pretty.dump(db:select("bbb"))
 
