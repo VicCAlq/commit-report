@@ -1,5 +1,6 @@
 local path = require("pl.path")
 local stringx = require("pl.stringx")
+local f = string.format
 
 local M = {}
 
@@ -10,7 +11,7 @@ function M.clone(url)
   assert(type(url) == "string", "clone: <url> must be a valid string")
 
   local repo_url = stringx.split(url, "/")
-  local repo_name = repo_url[#repo_url] or ""
+  local repo_name = repo_url[f("%s.%s"repo_url[#repo_url -1], repo_url[#repo_url])] or ""
   if stringx.endswith(repo_name, ".git") then
     repo_name = stringx.replace(repo_name, ".git", "")
   end

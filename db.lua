@@ -139,11 +139,13 @@ end
 function M.parse_cursor(cur)
   ---@diagnostic disable-next-line
   local rows = cur:fetch({}, "a")
+  local tbl = {}
   while rows do
+    table.insert(tbl, rows)
     ---@diagnostic disable-next-line
     rows = cur:fetch(rows, "a")
   end
-  return rows
+  return tbl
 end
 
 --- Safely closes the given database connection
@@ -165,6 +167,7 @@ function M.close(env, con, cur)
 end
 
 local env, con, cur, col_names, col_types = M.open("aaa", "test_repo")
+pretty.dump(M.parse_cursor(cur))
 pretty.dump(col_names)
 pretty.dump(col_types)
 pretty.dump(M.close(env, con, cur))
