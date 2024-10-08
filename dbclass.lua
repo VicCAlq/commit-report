@@ -6,7 +6,8 @@ local f = string.format
 
 ---@Module db.lua
 --- Module to create and manage SQLite3's databases for the project repositories.
---- Makes heavy use of the LuaSQL driver, to abstract the connections.
+--- For now it's basically an abstraction over LuaSQL, to lessen the need
+--- to write every statement and manually manage opening and closing connections.
 --- It works by first establishing the database's environment, then its connection,
 --- and from this point onwards you can create statements that returns cursors.
 ---
