@@ -86,7 +86,7 @@ function M.serialize_commits(project, branch)
           table.insert(processed_commits, single_commit)
           single_commit = {}
         end
-        single_commit.commit = stringx.split(line, " ")[2]
+        single_commit.commit_hash = stringx.split(line, " ")[2]
       elseif stringx.startswith(line, "Author") then
         local author = stringx.split(line, ":")[2]
         local author_fields = stringx.split(author, "<")
@@ -116,7 +116,7 @@ function M.serialize_commits(project, branch)
           clock_time[3]
         )
 
-        single_commit.time = Date({
+        single_commit.unix_time = Date({
           year = year,
           month = month,
           day = day,
