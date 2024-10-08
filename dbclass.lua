@@ -1,4 +1,5 @@
 local pretty = require("pl.pretty")
+local stringx = require("pl.stringx")
 local utils = require("pl.utils")
 local driver = require("luasql.sqlite3")
 local f = string.format
@@ -171,10 +172,11 @@ function DB:select(tbl, columns, clauses)
   local cls = self:format_clauses(clauses) or ""
 
   ---@diagnostic disable-next-line
-  local cur = assert(self.connection:execute(f("SELECT %s FROM %s %s;", cols, db_table, cls)))
+  self.cursor = assert(self.connection:execute(f("SELECT %s FROM %s %s;", cols, db_table, cls)))
 
   local selection = {}
-  local row = cur:fetch({}, "n")
+  ---@diagnostic disable-next-line
+  local row = self.cursor:fetch({}, "n")
 
   while row do
     local obj = {}
@@ -182,11 +184,58 @@ function DB:select(tbl, columns, clauses)
       obj[k] = v
     end
     table.insert(selection, obj)
-    row = cur:fetch(row, "n")
+    ---@diagnostic disable-next-line
+    row = self.cursor:fetch(row, "n")
   end
+
+  ---@diagnostic disable-next-line
+  self.cursor:close()
 
   self.rows = selection
   return self.rows
+end
+
+function DB:insert(tbl, items)
+  local db_table = tbl or self.tables[1]
+  assert(type(items) == "table")
+  assert(type(items[1]) == "table")
+
+  local values = self:format_values(items)
+  local cols = self:format_cols(self.col_names)
+
+  local statement = f(
+    [[
+    INSERT INTO %s(%s) VALUES %s;
+  ]],
+    db_table,
+    cols,
+    values
+  )
+
+  print(statement)
+
+  ---@diagnostic disable-next-line
+  local res = assert(self.connection:execute(statement))
+end
+
+function DB:format_values(values)
+  assert(type(values) == "table")
+  assert(type(values[1]) == "table")
+
+  local formatted_values = ""
+
+  for i, v in ipairs(values) do
+    local value = '( "' .. stringx.join('", "', v) .. '" )'
+    if i ~= #values then
+      value = value .. ", "
+    else
+      value = value .. ";"
+    end
+
+    formatted_values = formatted_values .. value
+  end
+
+  return formatted_values
 end
 
 --- Converts a table of columns to a string of columns separated by commas
@@ -215,29 +264,70 @@ function DB:format_clauses(clauses)
 
   if clauses ~= nil then
     for _, v in ipairs(clauses) do
-      clause_str = clause_str .. v .. "; "
+      clause_str = clause_str .. " " .. v
     end
-    clause_str = string.sub(clause_str, 1, -2)
+    clause_str = string.sub(clause_str, 2, -1)
   end
 
   return clause_str
 end
 
 -- ##############################          TESTS          ##############################
+local function random_ut()
+  local randomNumber = ""
+  for _ = 1, 10 do
+    randomNumber = randomNumber .. math.random(0, 9)
+  end
+  return randomNumber
+end
 
 local db = DB:new("aaa", "aaa", "aaa")
--- pretty.dump(db.tables)
+
 local a, b = utils.unpack(db:open_table("test_repo"))
 io.write("aaa.db tables > ")
 pretty.dump(db.tables)
+
 io.write("test_repo column names > ")
 pretty.dump(a)
 io.write("test_repo column types > ")
 pretty.dump(b)
+
+io.write("Inserting data into test_repo > ")
+local values = {
+  {
+    random_ut() .. "b723f5d3df90ab4db0e6d69830test",
+    random_ut(),
+    "VicTest",
+    "vic@test.it",
+    "test/thang",
+    "2024-09-30 11:13:49.000",
+    "test commit",
+  },
+  {
+    random_ut() .. "b723f5d3df90ab4db0e6d69830aaaa",
+    random_ut(),
+    "VicTest",
+    "vic@test.it",
+    "test/thang",
+    "2024-09-30 11:13:49.000",
+    "test commit",
+  },
+}
+
+db:insert("test_repo", values)
+
 io.write("Data from table test_repo > ")
 pretty.dump(db:select("test_repo"))
+
+io.write("Selected data from table test_repo with some clauses > ")
+pretty.dump(db:select("test_repo", { "unix_time", "author_name", "author_email" }, { "WHERE unix_time > 2727705629" }))
+
 io.write("Data from table bbb > ")
 pretty.dump(db:select("bbb"))
+
+print(db:format_values(values))
+print(db:format_cols({ "aaa", "bbb", "ccc" }))
+print(db:format_clauses({ "WHERE I test this", "AND I try that" }))
 
 -- ##############################       END OF TESTS      ##############################
 
