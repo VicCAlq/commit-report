@@ -1,4 +1,5 @@
 local pretty = require("pl.pretty")
+local path = require("pl.path")
 local stringx = require("pl.stringx")
 local utils = require("pl.utils")
 local driver = require("luasql.sqlite3")
@@ -104,7 +105,9 @@ end
 ---and Connection objects, and list of the DB's tables
 function DB:open(db_file)
   local env = assert(driver.sqlite3())
-  local con = assert(env:connect(f("./%s.db", db_file)))
+  local db_path = path.dirname((path.abspath("./aaa.db")))
+  print(db_path)
+  local con = assert(env:connect(f("%s/%s.db", db_path, db_file)))
   self.environment = env
   self.connection = con
 

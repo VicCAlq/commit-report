@@ -8,7 +8,7 @@ local f = string.format
 --- http://lunarmodules.github.io/luasql/examples.html
 
 local env_a = assert(driver.sqlite3())
-local con_a = assert(env_a:connect("./bbb.db"))
+local con_a = assert(env_a:connect("./../bbb.db"))
 local res_a = con_a:execute("DROP TABLE people;")
 res_a = con_a:execute("CREATE TABLE people( name VARCHAR(50), email VARCHAR(50))")
 
@@ -48,7 +48,7 @@ env_a:close()
 --- Test with existing table
 
 local env_b = assert(driver.sqlite3())
-local con_b = assert(env_b:connect("./aaa.db"))
+local con_b = assert(env_b:connect("./../aaa.db"))
 local cur_b = assert(con_b:execute(f("SELECT * FROM test_repo;")))
 
 local row_b = cur_b:fetch({}, "a")

@@ -166,7 +166,7 @@ function M.close(env, con, cur)
   return { is_cur_closed, is_con_closed, is_env_closed }
 end
 
-local env, con, cur, col_names, col_types = M.open("aaa", "test_repo")
+local env, con, cur, col_names, col_types = M.open("../aaa", "test_repo")
 pretty.dump(M.parse_cursor(cur))
 pretty.dump(col_names)
 pretty.dump(col_types)
