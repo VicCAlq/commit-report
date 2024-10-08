@@ -1,5 +1,4 @@
 local Date = require("pl.Date")
-local termite = require("modules_raw.termite")
 local parser = require("src.parser")
 local C = require("utils.constants")
 
@@ -30,6 +29,7 @@ function M.get_commits_in_range(branches, project, range)
   end
 
   branches = branches or { "main" }
+  -- if a range is not given, it'll default to the last 7 days from today
   range = range or { oldest = 7, latest = 0 }
   local commits_in_range = {}
 
@@ -38,6 +38,7 @@ function M.get_commits_in_range(branches, project, range)
   local today = Date({ hour = 00, min = 00, sec = 00 })
 
   for i, v in ipairs(branches) do
+    -- Gets the commits for the given branch
     local commits = parser.serialize_commits(project, branches[i])
 
     -- Progress bar implementation
@@ -51,6 +52,7 @@ function M.get_commits_in_range(branches, project, range)
       )
     end
 
+    -- The part that actuallly filters the commits by the given days range
     if commits ~= nil then
       if today.time - commits[1].time < C.day_length * range.oldest then
         commits_in_range[v] = {}

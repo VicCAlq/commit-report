@@ -15,6 +15,34 @@ This app's main function is to create a summary of the latest activities in a re
 - Decide on which and how to implement the charts
 - Report format can also be specified (vertical for print, horizontal for presentation)
 
+-[x] CLI arguments  
+-[x] Repository-fetching module: Will save the fetched repositories to ./repos/  
+-[x] Parser module:  
+ -[x] Branches parser  
+ -[x] Branches categorizer (remote/local)  
+ -[x] Commit serializer  
+-[x] Filter module  
+-[x] SQLite interface:  
+ -[x] LuaSQL install  
+ -[x] DB class instantiation  
+ -[x] Connection initializer  
+ -[x] Connection closer  
+ -[x] Table selection  
+ -[x] Table creation  
+ -[x] Table deletion  
+ -[x] Values selection  
+ -[x] Values insertion  
+ -[x] Values deletion  
+ -[x] Values parsing  
+ -[x] Columns parsing  
+ -[x] Clauses parsing  
+-[ ] SQLite integration:  
+ -[ ] With fetcher  
+ -[ ] With parser  
+ -[ ] With filter  
+-[ ] LaTeX integration  
+-[ ] Lapis integration
+
 ## App workflow
 
 -[ ] Call the app by something like `summarizer https://www.gitsmth.com/my_company/my_repo.git` -[ ] Show cloning progress -[ ] After that, prompt the user about:
