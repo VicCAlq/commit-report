@@ -55,6 +55,11 @@ local f = string.format
 ---@field close function Closes the database environment, connection and cursor
 ---@field open_table function<string> Opens the given table
 ---@field select function<string?, string?, string?> Runs a select statement on the given table
+---@field insert function<string, table<table<string>>> Inserts the given items in the given table
+---@field delete function<string, table<string>> Deletes the rows matching the given table and clauses
+---@field drop_table function<string> Drops the given table
+---@field create_table function<string, table<string>> Creates the given table
+---@field format_values function<table<table<string>>> Returns the values as a string
 ---@field format_cols function<table<string>> Returns the column list as a string
 ---@field format_clauses function<table<string>> Returns the clause list as a string
 ---@field environment userdata Environment object
@@ -78,7 +83,7 @@ function DB:new(db_file, owner, repo_name)
   obj.owner = owner
   obj.repo_name = repo_name
   obj.db_file = db_file or f("%s.%s.db", owner, repo_name)
-  obj.environment, obj.connection, obj.tables = utils.unpack(DB:open(db_file))
+  obj.environment, obj.connection, obj.tables = utils.unpack(self:open(db_file))
   ---@type userdata|nil Connection object if not nil
   obj.cursor = nil
   ---@type table<any>
@@ -160,6 +165,36 @@ function DB:open_table(table)
   return res
 end
 
+--- Creates the given table
+---@param tbl string Table name
+---@param columns table<string> The columns to be created
+---@return number affected_rows
+function DB:create_table(tbl, columns)
+  local cols = self:format_cols(columns)
+  table.insert(self.tables, tbl)
+  local db_table = tbl or self.tables[1]
+  ---@diagnostic disable-next-line
+  local res = assert(self.connection:execute(f("CREATE TABLE IF NOT EXISTS %s(%s);", db_table, cols)))
+
+  return res
+end
+
+--- Drops the given table
+---@param tbl string Table name
+---@return number affected_rows
+function DB:drop_table(tbl)
+  local db_table = tbl or self.tables[1]
+  for i, v in ipairs(self.tables) do
+    if v == tbl then
+      table.remove(self.tables, i)
+    end
+  end
+  ---@diagnostic disable-next-line
+  local res = assert(self.connection:execute(f("DROP TABLE %s;", db_table)))
+
+  return res
+end
+
 --- Gets the result of the given SELECT statement as a Lua table, both
 --- returning it and setting it to the internal `rows` field.
 ---@param tbl string The table to which the statement will be applied
@@ -198,6 +233,7 @@ end
 --- Inserts new data (given as Lua tables) into the given db table
 ---@param tbl string Table name
 ---@param items table<table<string|number>> Items to be inserted
+---@return number affected_rows
 function DB:insert(tbl, items)
   local db_table = tbl or self.tables[1]
   assert(type(items) == "table")
@@ -208,13 +244,36 @@ function DB:insert(tbl, items)
   local statement = f(" INSERT INTO %s(%s) VALUES %s; ", db_table, cols, values)
 
   ---@diagnostic disable-next-line
-  local res = assert(self.connection:execute(statement))
-  io.write("aaa")
-  print(res)
+  local affected_rows = assert(self.connection:execute(statement))
+
+  return affected_rows
+end
+
+--- Deletes data corresponding to the given clauses (given as a table)
+--- into the given db table
+---@param tbl string Table name
+---@param clauses table<string> Clauses to be parsed
+---@return number affected_rows
+function DB:delete(tbl, clauses)
+  local db_table = tbl or self.tables[1]
+  assert(type(clauses) == "table")
+  assert(type(clauses[1]) == "string")
+
+  local cls = self:format_clauses(clauses)
+  local statement = f("DELETE FROM %s %s;", db_table, cls)
+
+  ---@diagnostic disable-next-line
+  local affected_rows = self.connection:execute(statement)
+
+  return affected_rows
 end
 
 -- Formatter methods
 
+--- Converts a table of items to a string of these items delimited
+--- by parenthesis and separated by commas
+---@param values table<table<string|number>>
+---@return string formatted_values
 function DB:format_values(values)
   assert(type(values) == "table")
   assert(type(values[1]) == "table")
@@ -270,15 +329,27 @@ function DB:format_clauses(clauses)
 end
 
 -- ##############################          TESTS          ##############################
+
 local function random_ut()
-  local rand = ""
+  local random_n = ""
   for _ = 1, 10 do
-    rand = rand .. math.random(0, 9)
+    random_n = random_n .. math.random(0, 9)
   end
-  return rand
+  return random_n
 end
 
 local db = DB:new("aaa", "aaa", "aaa")
+
+db:create_table("to_be_deleted", { "name VARCHAR(50)", "phone VARCHAR(20)" })
+local c, d = utils.unpack(db:open_table("to_be_deleted"))
+io.write("aaa.db tables > ")
+pretty.dump(db.tables)
+io.write("to_be_deleted column names > ")
+pretty.dump(c)
+io.write("to_be_deleted column types > ")
+pretty.dump(d)
+
+db:drop_table("to_be_deleted")
 
 local a, b = utils.unpack(db:open_table("test_repo"))
 io.write("aaa.db tables > ")
@@ -319,11 +390,19 @@ pretty.dump(db:select("test_repo"))
 io.write("Selected data from table test_repo with some clauses > ")
 pretty.dump(db:select("test_repo", { "unix_time", "author_name", "author_email" }, { "WHERE unix_time > 2727705629" }))
 
+io.write("Deleting data for used VicTest from table test_repo > Affected rows: ")
+print(db:delete("test_repo", { 'WHERE author_name = "VicTest"' }))
+io.write("Data from table test_repo > ")
+pretty.dump(db:select("test_repo"))
+
 io.write("Data from table bbb > ")
 pretty.dump(db:select("bbb"))
 
+io.write("Value formatting test > ")
 print(db:format_values(values))
+io.write("Column formatting test > ")
 print(db:format_cols({ "aaa", "bbb", "ccc" }))
+io.write("Clause formatting test > ")
 print(db:format_clauses({ "WHERE I test this", "AND I try that" }))
 
 -- ##############################       END OF TESTS      ##############################
