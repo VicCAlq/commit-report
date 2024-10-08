@@ -209,6 +209,7 @@ function DB:insert(tbl, items)
 
   ---@diagnostic disable-next-line
   local res = assert(self.connection:execute(statement))
+  io.write("aaa")
   print(res)
 end
 
