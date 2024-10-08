@@ -106,7 +106,6 @@ end
 function DB:open(db_file)
   local env = assert(driver.sqlite3())
   local db_path = path.dirname((path.abspath("./aaa.db")))
-  print(db_path)
   local con = assert(env:connect(f("%s/%s.db", db_path, db_file)))
   self.environment = env
   self.connection = con
