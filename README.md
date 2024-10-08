@@ -50,29 +50,29 @@ Schema of how the web-app version will work is still in the planning stages
 - [x] CLI arguments
 - [x] Repository-fetching module: Will save the fetched repositories to ./repos/
 - [x] Parser module:
-- [x] Branches parser
-- [x] Branches categorizer (remote/local)
-- [x] Commit serializer
+  - [x] Branches parser
+  - [x] Branches categorizer (remote/local)
+  - [x] Commit serializer
 - [x] Filter module
 - [x] SQLite interface:
-- [x] LuaSQL install
-- [x] DB class instantiation
-- [x] Connection initializer
-- [x] Connection closer
-- [x] Table selection
-- [x] Table creation
-- [x] Table deletion
-- [x] Values selection
-- [x] Values insertion
-- [x] Values deletion
-- [x] Values parsing
-- [x] Columns parsing
-- [x] Clauses parsing
+  - [x] LuaSQL install
+  - [x] DB class instantiation
+  - [x] Connection initializer
+  - [x] Connection closer
+  - [x] Table selection
+  - [x] Table creation
+  - [x] Table deletion
+  - [x] Values selection
+  - [x] Values insertion
+  - [x] Values deletion
+  - [x] Values parsing
+  - [x] Columns parsing
+  - [x] Clauses parsing
 - [ ] SQLite integration:
-- [ ] With fetcher
-- [ ] With parser
-- [ ] With filter
-- [ ] With main script
+  - [ ] With fetcher
+  - [ ] With parser
+  - [ ] With filter
+  - [ ] With main script
 - [ ] LaTeX integration
 - [ ] Lapis integration
 - [ ] Docker containerization
