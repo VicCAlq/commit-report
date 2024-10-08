@@ -41,7 +41,8 @@ This app's main function is to create a summary of the latest activities in a re
  -[ ] With parser  
  -[ ] With filter  
 -[ ] LaTeX integration  
--[ ] Lapis integration
+-[ ] Lapis integration  
+-[ ] Docker containerization
 
 ## App workflow
 
