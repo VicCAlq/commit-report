@@ -195,6 +195,9 @@ function DB:select(tbl, columns, clauses)
   return self.rows
 end
 
+--- Inserts new data (given as Lua tables) into the given db table
+---@param tbl string Table name
+---@param items table<table<string|number>> Items to be inserted
 function DB:insert(tbl, items)
   local db_table = tbl or self.tables[1]
   assert(type(items) == "table")
@@ -202,21 +205,14 @@ function DB:insert(tbl, items)
 
   local values = self:format_values(items)
   local cols = self:format_cols(self.col_names)
-
-  local statement = f(
-    [[
-    INSERT INTO %s(%s) VALUES %s;
-  ]],
-    db_table,
-    cols,
-    values
-  )
-
-  print(statement)
+  local statement = f(" INSERT INTO %s(%s) VALUES %s; ", db_table, cols, values)
 
   ---@diagnostic disable-next-line
   local res = assert(self.connection:execute(statement))
+  print(res)
 end
+
+-- Formatter methods
 
 function DB:format_values(values)
   assert(type(values) == "table")
@@ -274,11 +270,11 @@ end
 
 -- ##############################          TESTS          ##############################
 local function random_ut()
-  local randomNumber = ""
+  local rand = ""
   for _ = 1, 10 do
-    randomNumber = randomNumber .. math.random(0, 9)
+    rand = rand .. math.random(0, 9)
   end
-  return randomNumber
+  return rand
 end
 
 local db = DB:new("aaa", "aaa", "aaa")
