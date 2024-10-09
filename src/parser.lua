@@ -62,6 +62,7 @@ function M.serialize_commits(project, branch)
   assert(type(project) == "string", "serialize_commits: The value given for 'project' is not a string")
   assert(type(branch) == "string", "serialize_commits: The value given for 'branch' is not a string")
 
+  -- Defaults to branch "main"
   if branch == nil then
     branch = "main"
   elseif stringx.startswith(branch, "remotes/origin/") then
@@ -71,12 +72,16 @@ function M.serialize_commits(project, branch)
   local project_path = path.relpath("repos" .. path.sep .. project)
   local processed_commits = {}
 
+  -- Gets the logs
   local commit = io.popen(string.format("cd %s && git switch -fq --progress %s && git log", project_path, branch))
 
+  -- Parsing operations
   if commit ~= nil then
     local single_commit = {}
     for line in commit:lines() do
+      -- Gets the commit hash
       if stringx.startswith(line, "commit") then
+        -- If there's a commit already previously parsed it'll be added to the commit list
         if
           single_commit.description ~= nil
           and single_commit.date ~= nil
@@ -87,11 +92,13 @@ function M.serialize_commits(project, branch)
           single_commit = {}
         end
         single_commit.commit_hash = stringx.split(line, " ")[2]
+      -- Gets author's name and email
       elseif stringx.startswith(line, "Author") then
         local author = stringx.split(line, ":")[2]
         local author_fields = stringx.split(author, "<")
         single_commit.author_name = string.sub(author_fields[1], 2, -2)
         single_commit.author_email = string.sub(author_fields[2], 1, -2)
+      -- Gets the Date object and unix time
       elseif stringx.startswith(line, "Date") then
         local date_parts = stringx.split(string.sub(line, 9, -1), " ")
         local year, month, day = date_parts[5], Months[date_parts[2]], date_parts[3]
@@ -124,6 +131,7 @@ function M.serialize_commits(project, branch)
           min = clock_time[2],
           sec = clock_time[3],
         }).time
+      -- Gets the commit message
       elseif #line > 1 then
         if single_commit.description == nil then
           single_commit.description = stringx.lstrip(line)

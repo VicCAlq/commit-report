@@ -8,7 +8,7 @@ local fetcher = require("src.fetcher")
 local args = lapp([[
   Command-line mode for the summarizer.
     -v,--vertical  Vertical layout orientation (defaults to horizontal)
-    -l,--latest (default 0)  Most recent date for the fetched commits
+    <latest> (number)  Most recent date for the fetched commits
     <oldest> (number)  Oldest date for the fetched commits
     <url> (string)  URL for the GIT repo
 ]])

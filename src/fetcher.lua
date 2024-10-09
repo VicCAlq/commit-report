@@ -11,12 +11,14 @@ function M.clone(url)
   assert(type(url) == "string", "clone: <url> must be a valid string")
 
   local repo_url = stringx.split(url, "/")
+  -- Name must follow the template "owner.repository/"
   local repo_name = repo_url[f("%s.%s", repo_url[#repo_url - 1], repo_url[#repo_url])] or ""
   if stringx.endswith(repo_name, ".git") then
     repo_name = stringx.replace(repo_name, ".git", "")
   end
 
   if not path.exists(path.relpath("repos" .. path.sep .. repo_name)) then
+    -- Cloning without any blobs, but without the --bare option to keep the branches
     local err, _ = os.execute("cd ./repos && git clone --filter=blob:none " .. url)
     if err then
       error("Could not clone the repository from the url " .. url)
