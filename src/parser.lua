@@ -1,8 +1,8 @@
-local Date = require("pl.Date")
-local path = require("pl.path")
-local stringx = require("pl.stringx")
-local pretty = require("pl.pretty")
-local Months = require("utils.constants").months
+local Date = assert(require("pl.Date"))
+local path = assert(require("pl.path"))
+local stringx = assert(require("pl.stringx"))
+local pretty = assert(require("pl.pretty"))
+local Months = assert(require("utils.constants").months)
 
 local M = {}
 

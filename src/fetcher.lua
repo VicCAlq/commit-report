@@ -1,5 +1,5 @@
-local path = require("pl.path")
-local stringx = require("pl.stringx")
+local path = assert(require("pl.path"))
+local stringx = assert(require("pl.stringx"))
 local f = string.format
 
 local M = {}

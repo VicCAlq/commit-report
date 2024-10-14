@@ -1,8 +1,8 @@
-local lapp = require("pl.lapp")
-local pretty = require("pl.pretty")
-local parser = require("src.parser")
-local filter = require("src.filter")
-local fetcher = require("src.fetcher")
+local lapp = assert(require("pl.lapp"))
+local pretty = assert(require("pl.pretty"))
+local parser = assert(require("src.parser"))
+local filter = assert(require("src.filter"))
+local fetcher = assert(require("src.fetcher"))
 
 --- Command-line arguments
 local args = lapp([[

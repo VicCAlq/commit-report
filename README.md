@@ -74,6 +74,7 @@ Schema of how the web-app version will work is still in the planning stages
   - [ ] With filter
   - [ ] With main script
 - [ ] LaTeX integration
+- [ ] Ollama integration
 - [ ] Lapis integration
 - [ ] Docker containerization
 

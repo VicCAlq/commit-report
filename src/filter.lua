@@ -1,6 +1,6 @@
-local Date = require("pl.Date")
-local parser = require("src.parser")
-local C = require("utils.constants")
+local Date = assert(require("pl.Date"))
+local parser = assert(require("src.parser"))
+local C = assert(require("utils.constants"))
 
 local M = {}
 

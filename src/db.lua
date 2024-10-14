@@ -1,5 +1,5 @@
-local pretty = require("pl.pretty")
-local driver = require("luasql.sqlite3")
+local pretty = assert(require("pl.pretty"))
+local driver = assert(require("luasql.sqlite3"))
 local f = string.format
 
 ---@Module db.lua

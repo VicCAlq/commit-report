@@ -1,9 +1,23 @@
-local pretty = require("pl.pretty")
-local path = require("pl.path")
-local stringx = require("pl.stringx")
-local utils = require("pl.utils")
-local driver = require("luasql.sqlite3")
 local f = string.format
+-- local version = _VERSION:match("%d+%.%d+")
+--
+-- package.path = f(
+--   "../modules/share/lua/%s/?/?.lua;modules/share/lua/%s/?/init.lua;../modules/share/lua/%s/?.lua;%s",
+--   version,
+--   version,
+--   version,
+--   package.path
+-- )
+-- package.cpath = f("../modules/lib/lua/%s/?.so;modules/lib/lua/%s/?/?.so;%s", version, version, package.path)
+--
+-- print(package.path)
+-- print(package.cpath)
+
+local pretty = assert(require("pl.pretty"))
+local path = assert(require("pl.path"))
+local stringx = assert(require("pl.stringx"))
+local utils = assert(require("pl.utils"))
+local driver = assert(require("luasql.sqlite3"))
 
 ---@Module db.lua
 --- Module to create and manage SQLite3's databases for the project repositories.
