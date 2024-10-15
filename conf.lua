@@ -16,12 +16,23 @@ local f = string.format
 
 ---@type string Gets the current Lua version
 local version = _VERSION:match("%d+%.%d+")
+local path_full = string.gsub(assert(io.popen("pwd", "r")):read("*a"), "\n", "")
 
 package.path = f(
-  "modules/share/lua/%s/?/?.lua;modules/share/lua/%s/?/init.lua;modules/share/lua/%s/?.lua;%s",
+  [[%s/modules/share/lua/%s/?/?.lua;%s/modules/share/lua/%s/?/init.lua;%s/modules/share/lua/%s/?.lua;%s]],
+  path_full,
   version,
+  path_full,
   version,
+  path_full,
   version,
   package.path
 )
-package.cpath = f("modules/lib/lua/%s/?.so;modules/lib/lua/%s/?/?.so;%s", version, version, package.path)
+package.cpath = f(
+  [[%s/modules/lib/lua/%s/?.so;%s/modules/lib/lua/%s/?/?.so;%s]],
+  path_full,
+  version,
+  path_full,
+  version,
+  package.cpath
+)
