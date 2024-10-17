@@ -1,6 +1,10 @@
+local C = assert(require("utils.constants"))
+package.path = C.luapath
+package.cpath = C.cpath
+
+local f = string.format
 local pretty = assert(require("pl.pretty"))
 local driver = assert(require("luasql.sqlite3"))
-local f = string.format
 
 ---@Module db.lua
 --- Module to create and manage SQLite3's databases for the project repositories.

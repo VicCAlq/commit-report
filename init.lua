@@ -1,3 +1,8 @@
+local C = assert(require("utils.constants"))
+package.path = C.luapath
+package.cpath = C.cpath
+
+local f = string.format
 local lapp = assert(require("pl.lapp"))
 local pretty = assert(require("pl.pretty"))
 local parser = assert(require("src.parser"))

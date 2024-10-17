@@ -1,9 +1,8 @@
-local f = string.format
-local C = require("utils.constants")
-
+local C = assert(require("utils.constants"))
 package.path = C.luapath
 package.cpath = C.cpath
 
+local f = string.format
 local pretty = assert(require("pl.pretty"))
 local path = assert(require("pl.path"))
 local stringx = assert(require("pl.stringx"))

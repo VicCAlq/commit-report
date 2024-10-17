@@ -1,6 +1,10 @@
+local C = assert(require("utils.constants"))
+package.path = C.luapath
+package.cpath = C.cpath
+
+local f = string.format
 local pretty = assert(require("pl.pretty"))
 local driver = assert(require("luasql.sqlite3"))
-local f = string.format
 
 --- Test file to explore _why_ the `fetch` method from the Cursor object
 --- isn't working properly, and _how_ to eventually fix it if viable.

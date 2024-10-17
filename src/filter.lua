@@ -1,6 +1,9 @@
+local C = assert(require("utils.constants"))
+package.path = C.luapath
+package.cpath = C.cpath
+
 local Date = assert(require("pl.Date"))
 local parser = assert(require("src.parser"))
-local C = assert(require("utils.constants"))
 
 local M = {}
 

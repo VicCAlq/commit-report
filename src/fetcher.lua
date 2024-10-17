@@ -1,3 +1,7 @@
+local C = assert(require("utils.constants"))
+package.path = C.luapath
+package.cpath = C.cpath
+
 local path = assert(require("pl.path"))
 local stringx = assert(require("pl.stringx"))
 local f = string.format
