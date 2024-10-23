@@ -68,6 +68,7 @@ Schema of how the web-app version will work is still in the planning stages
   - [x] Values parsing
   - [x] Columns parsing
   - [x] Clauses parsing
+- [ ] Tests for previous things
 - [ ] SQLite integration:
   - [ ] With fetcher
   - [ ] With parser

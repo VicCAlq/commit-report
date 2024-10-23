@@ -56,6 +56,9 @@ local driver = assert(require("luasql.sqlite3"))
 
 --- DataBase object class
 ---@class DB
+---@field owner string Repository owner's name
+---@field repo_name string Repository's name
+---@field db_file string Name of the database file
 ---@field new function<string, string, string> Constructor
 ---@field open function<string> Opens the given database file
 ---@field close function Closes the database environment, connection and cursor
@@ -76,30 +79,31 @@ local driver = assert(require("luasql.sqlite3"))
 ---@field col_names table<string> List of column names for selected table
 ---@field col_types table<string> List of column types for selected table
 local DB = {}
+DB.__index = DB
 
 --- Instantiates the DataBase object
 ---@param db_file string Database file. If empty, it's automatically derived from owner and repository names
 ---@param owner string Owner name, it's the entity the repository is under, eg: github.com/owner
 ---@param repo_name string Repository name, as in gitlab.com/owner/repo_name
 ---@return table<any> obj The DataBase object
-function DB:new(db_file, owner, repo_name)
+function DB.new(db_file, owner, repo_name)
   -- Constructor
-  local obj = setmetatable({}, { __index = DB })
+  local instance = setmetatable({}, DB)
 
-  obj.owner = owner
-  obj.repo_name = repo_name
-  obj.db_file = db_file or f("%s.%s.db", owner, repo_name)
-  obj.environment, obj.connection, obj.tables = utils.unpack(self:open(db_file))
+  instance.owner = owner
+  instance.repo_name = repo_name
+  instance.db_file = db_file or f("%s.%s.db", owner, repo_name)
+  instance.environment, instance.connection, instance.tables = utils.unpack(DB:open(db_file))
   ---@type userdata|nil Connection object if not nil
-  obj.cursor = nil
+  instance.cursor = nil
   ---@type table<any>
-  obj.rows = {}
+  instance.rows = {}
   ---@type table<string>
-  obj.col_names = {}
+  instance.col_names = {}
   ---@type table<string>
-  obj.col_types = {}
+  instance.col_types = {}
 
-  return obj
+  return instance
 end
 
 --- Opens the database connection, setting the Environment and Connection
@@ -345,7 +349,11 @@ local function random_ut()
   return random_n
 end
 
-local db = DB:new("aaa", "aaa", "aaa")
+local db = DB.new("aaa", "bbb", "ccc")
+
+print(db.owner)
+print(db.db_file)
+print(db.repo_name)
 
 db:create_table("to_be_deleted", { "name VARCHAR(50)", "phone VARCHAR(20)" })
 local c, d = utils.unpack(db:open_table("to_be_deleted"))
