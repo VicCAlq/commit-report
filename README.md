@@ -69,6 +69,18 @@ Schema of how the web-app version will work is still in the planning stages
   - [x] Columns parsing
   - [x] Clauses parsing
 - [ ] Tests for previous things
+  - [ ] Parser
+  - [ ] Fetcher
+  - [ ] Filter
+  - [ ] Database Interface
+    - [ ] Instantiation
+    - [ ] Connection
+    - [ ] Table getter
+    - [ ] Selection
+    - [ ] Insertion
+    - [ ] Deletion
+    - [ ] Closer
+  - [ ] Main script
 - [ ] SQLite integration:
   - [ ] With fetcher
   - [ ] With parser
