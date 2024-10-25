@@ -68,8 +68,8 @@ Schema of how the web-app version will work is still in the planning stages
   - [x] Values parsing
   - [x] Columns parsing
   - [x] Clauses parsing
-- [ ] Tests for previous things
-  - [ ] Parser
+- [/] Tests for previous things
+  - [x] Parser
   - [ ] Fetcher
   - [ ] Filter
   - [ ] Database Interface

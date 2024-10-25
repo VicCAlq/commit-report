@@ -2,20 +2,30 @@ local C = assert(require("utils.constants"))
 package.path = C.luapath
 package.cpath = C.cpath
 
+local f = string.format
 local Date = assert(require("pl.Date"))
+local pretty = assert(require("pl.pretty"))
 local parser = assert(require("src.parser"))
 
 local M = {}
 
 --- Filters the branch table removing inactive branches
 ---@param branches table<string>? - List of branch names
----@param project string - Project name as in its url
+---@param project string - Project name in the structure "owner.project", as in "www.gitetc.com/owner/project"
 ---@param range { oldest: number, latest: number }? - Range of days to gather commits from, from oldest to newest. Defaults to { oldest: 4, latest: 0 }
 ---@return table<string> - Table containing the commits
 function M.get_commits_in_range(branches, project, range)
   -- Assertions for the params
-  assert(type(branches) == "table" or "nil", "get_commits_in_range: Value for 'branches' is not a table or nil")
-  assert(type(range) == "table" or "nil", "get_commits_in_range: Value for 'range' is not a table or nil")
+  assert(
+    type(branches) == "table" or type(branches) == "nil",
+    "get_commits_in_range: Value for 'branches' is not a table or nil"
+  )
+  assert(type(project) == "string", "get_commits_in_range: Value for 'project' must be a valid string")
+  assert(
+    type(range) == "table" or type(range) == "nil",
+    "get_commits_in_range: Value for 'range' is not a table or nil"
+  )
+
   if range ~= nil then
     assert(
       type(range.oldest) == "number",
@@ -42,7 +52,13 @@ function M.get_commits_in_range(branches, project, range)
 
   for i, v in ipairs(branches) do
     -- Gets the commits for the given branch
-    local commits = parser.serialize_commits(project, branches[i])
+    local success, res = pcall(parser.serialize_commits, project, branches[i])
+
+    if not success then
+      error(f("parser.serialize_commits failed with error %s", res))
+    end
+
+    local commits = res
 
     -- Progress bar implementation
     local done = i / #branches
@@ -57,12 +73,12 @@ function M.get_commits_in_range(branches, project, range)
 
     -- The part that actuallly filters the commits by the given days range
     if commits ~= nil then
-      if today.time - commits[1].time < C.day_length * range.oldest then
+      if today.time - commits[1].unix_time < C.day_length * range.oldest then
         commits_in_range[v] = {}
         for _, commit in ipairs(commits) do
           if
-            today.time - commit.time < C.day_length * range.oldest
-            and today.time - commit.time > C.day_length * range.latest
+            today.time - commit.unix_time < C.day_length * range.oldest
+            and today.time - commit.unix_time > C.day_length * range.latest
           then
             table.insert(commits_in_range[v], commit)
           end
