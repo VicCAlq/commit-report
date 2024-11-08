@@ -71,7 +71,7 @@ Schema of how the web-app version will work is still in the planning stages
 - [/] Tests for previous things
   - [x] Parser
   - [ ] Fetcher
-  - [ ] Filter
+  - [x] Filter
   - [ ] Database Interface
     - [ ] Instantiation
     - [ ] Connection
